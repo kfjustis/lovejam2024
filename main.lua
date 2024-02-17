@@ -1,4 +1,8 @@
+--global requires
+Object = require("lib.classic")
+
 local push = require("lib.push")
+local Spacescroller = require("obj.spacescroller")
 
 local gameWidth, gameHeight = 320, 240
 local windowWidth, windowHeight = 640, 480
@@ -13,23 +17,26 @@ push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {
     highdpi = false
 })
 
+local bg = Spacescroller()
+
 function love.load()
-    bg_slice_1 = love.graphics.newImage("assets/bg_placeholder.png")
-    bg_slice_2 = love.graphics.newImage("assets/bg_placeholder.png")
 end
 
 function love.update(dt)
+    bg:update(dt)
 end
 
 function love.draw()
     push:start()
+
+
     --black border bars and render region
     push:setBorderColor(0, 0, 0, 1)
     love.graphics.clear(0,0,1,1)
 
-    --draw start
-    love.graphics.draw(bg_slice_1, 0, 0)
-    --draw end
+    bg:draw()
+
+
     push:finish()
 end
 
