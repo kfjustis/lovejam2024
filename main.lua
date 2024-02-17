@@ -1,48 +1,35 @@
---global requires
+-- Global requires.
+Gamestate = require("lib.gamestate")
 Object = require("lib.classic")
-local push = require("lib.push")
+Push = require("lib.Push")
 
-local Spacescroller = require("obj.spacescroller")
-local Spaceship = require("obj.spaceship")
+-- Global settings.
+G_GAMEWIDTH, G_GAMEHEIGHT = 320, 240
+G_WINDOWWIDTH, G_WINDOWHEIGHT = 640, 480
 
-local gameWidth, gameHeight = 320, 240
-local windowWidth, windowHeight = 640, 480
-
--- resizable and uses canvas
-love.graphics.setDefaultFilter("nearest", "nearest", 1)
-
-push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {
-    fullscreen = false,
-    resizable = true,
-    canvas = true,
-    highdpi = false
-})
-
-local bg = Spacescroller()
-local ship = Spaceship()
+-- Global states.
+G_S_FOCUS = require("states.focus")
+G_S_GAME = require("states.game")
 
 function love.load()
-end
+    -- Apply window and graphics settings first.
+    love.graphics.setDefaultFilter("nearest", "nearest", 1)
+    Push:setupScreen(G_GAMEWIDTH, G_GAMEHEIGHT, G_WINDOWWIDTH, G_WINDOWHEIGHT, {
+        fullscreen = false,
+        resizable = true,
+        canvas = true,
+        highdpi = false
+    })
 
-function love.update(dt)
-    bg:update(dt)
-end
-
-function love.draw()
-    push:start()
-
-
-    --black border bars and render region
-    push:setBorderColor(0, 0, 0, 1)
-    love.graphics.clear(0,0,1,1)
-
-    bg:draw()
-    ship:draw()
-
-
-    push:finish()
+    -- Set the initial scene.
+    Gamestate.registerEvents()
+    Gamestate.switch(G_S_FOCUS)
 end
 
 function love.resize(w, h)
-    return push:resize(w, h)
+    return Push:resize(w, h)
+end
+
+function love.quit()
+    print("INFO: Exit success.")
 end
