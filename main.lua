@@ -1,8 +1,9 @@
 --global requires
 Object = require("lib.classic")
-
 local push = require("lib.push")
+
 local Spacescroller = require("obj.spacescroller")
+local Spaceship = require("obj.spaceship")
 
 local gameWidth, gameHeight = 320, 240
 local windowWidth, windowHeight = 640, 480
@@ -18,6 +19,7 @@ push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {
 })
 
 local bg = Spacescroller()
+local ship = Spaceship()
 
 function love.load()
 end
@@ -35,6 +37,7 @@ function love.draw()
     love.graphics.clear(0,0,1,1)
 
     bg:draw()
+    ship:draw()
 
 
     push:finish()
