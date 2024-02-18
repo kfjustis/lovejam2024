@@ -27,7 +27,7 @@ function love.load()
 
     -- Set the initial scene.
     Gamestate.registerEvents()
-    Gamestate.switch(G_S_FOCUS)
+    Gamestate.switch(G_S_GAME)
 end
 
 function love.update(dt)
