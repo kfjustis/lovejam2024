@@ -2,10 +2,14 @@ local game = {}
 
 local Spacescroller = require("obj.spacescroller")
 local Spaceship = require("obj.spaceship")
+local ControlBox = require("obj.interactable")
 
 local bg
 local ship
 local ball
+local box_north
+local box_east
+local box_west
 
 function game:draw()
 end
@@ -13,8 +17,26 @@ end
 function game:init()
     bg = Spacescroller()
     ship = Spaceship()
+
+    -- Boxes.
+    box_north = ControlBox(192, 36, 32, 32)
+    box_north:setColor(0, 0.8, 1, 1)
+    box_east = ControlBox(251, 176, 32, 32)
+    box_east:setColor(0.8, 0, 1, 1)
+    box_west = ControlBox(36, 96, 32, 32)
+    box_west:setColor(1, 0.6, 0, 1)
+
+    -- Player analog.
     ball = G_WORLD:newCollider("Rectangle", {100, 100, 10, 10})
+    ball:setFixedRotation(true)
     ball:setLinearDamping(10)
+    -- ball solver test
+    function ball:postSolve(other)
+        print("solved")
+        if other == box_west.collider then
+            print("\tinteraaaaaaaaaaaaa")
+        end
+    end
 end
 
 function game:enter()
@@ -46,6 +68,7 @@ end
 function game:draw()
     Push:start()
 
+
     -- Black border bars and render region.
     Push:setBorderColor(0, 0, 0, 1)
     love.graphics.clear(0,0,0,1)
@@ -53,15 +76,16 @@ function game:draw()
     bg:draw()
     ship:draw()
 
+    -- Draw boxes.
+    box_north:draw()
+    box_east:draw()
+    box_west:draw()
+
+    -- Draw debug colliders.
     G_WORLD:draw()
 
-    Push:finish()
-end
 
-function game:leave()
-    bg = nil
-    ship = nil
-    ball = nil
+    Push:finish()
 end
 
 return game
