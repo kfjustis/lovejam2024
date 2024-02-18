@@ -1,6 +1,7 @@
 local focus = {}
 
 function focus:mousepressed(x, y, button, istouch)
+    -- Switch on left click.
     if button == 1 then
         Gamestate.switch(G_S_GAME)
      end

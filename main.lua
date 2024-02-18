@@ -1,7 +1,8 @@
 -- Global requires.
 Gamestate = require("lib.gamestate")
 Object = require("lib.classic")
-Push = require("lib.Push")
+Push = require("lib.push")
+Bf = require("lib.breezefield")
 
 -- Global settings.
 G_GAMEWIDTH, G_GAMEHEIGHT = 320, 240
@@ -21,9 +22,16 @@ function love.load()
         highdpi = false
     })
 
+    -- Init. the physics world.
+    G_WORLD = Bf.newWorld(0, 0, true)
+
     -- Set the initial scene.
     Gamestate.registerEvents()
     Gamestate.switch(G_S_FOCUS)
+end
+
+function love.update(dt)
+    G_WORLD:update(dt)
 end
 
 function love.resize(w, h)

@@ -5,6 +5,7 @@ local Spaceship = require("obj.spaceship")
 
 local bg
 local ship
+local ball
 
 function game:draw()
 end
@@ -12,6 +13,8 @@ end
 function game:init()
     bg = Spacescroller()
     ship = Spaceship()
+    ball = G_WORLD:newCollider("Rectangle", {100, 100, 10, 10})
+    ball:setLinearDamping(10)
 end
 
 function game:enter()
@@ -20,6 +23,24 @@ end
 
 function game:update(dt)
     bg:update(dt)
+
+    local speed = 200
+    if love.keyboard.isDown("up") then
+        ball:setLinearVelocity(0, -speed)
+    end
+    if love.keyboard.isDown("down") then
+        ball:setLinearVelocity(0, speed)
+    end
+    if love.keyboard.isDown("left") then
+        ball:setLinearVelocity(-speed, 0)
+    end
+    if love.keyboard.isDown("right") then
+        ball:setLinearVelocity(speed, 0)
+    end
+
+    --Round position to full pixel.
+    ball:setX(math.floor(ball:getX()+0.5))
+    ball:setY(math.floor(ball:getY()+0.5))
 end
 
 function game:draw()
@@ -32,7 +53,15 @@ function game:draw()
     bg:draw()
     ship:draw()
 
+    G_WORLD:draw()
+
     Push:finish()
+end
+
+function game:leave()
+    bg = nil
+    ship = nil
+    ball = nil
 end
 
 return game
