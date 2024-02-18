@@ -2,6 +2,8 @@
 Made for Love Jam 2024 with Love 11.5!
 
 # Libraries used
+* [Breezefield](https://github.com/HDictus/breezefield) (commit: [ae05a58](https://github.com/HDictus/breezefield/commit/ae05a587e5549163bda817111621594cdcb5a7db), License: MIT)
+
 * [Classic](https://github.com/rxi/classic/) (commit: [e561075](https://github.com/rxi/classic/commit/e5610756c98ac2f8facd7ab90c94e1a097ecd2c6), License: MIT)
 
 * [Hump.gamestate](https://github.com/HDictus/hump) (commit: [0029de0](https://github.com/HDictus/hump/commit/0029de08a0d3339ecc910af4a19eef89538f0972), License: Custom)

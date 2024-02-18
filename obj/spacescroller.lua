@@ -6,11 +6,12 @@ function Spacescroller:new()
 
     self.x = 0
     self.y = 0
+    self.scroll_speed = 100
 end
 
 function Spacescroller:update(dt)
-    self.y = self.y + (100 * dt)
-    if self.y > 240 then
+    self.y = self.y + (self.scroll_speed * dt)
+    if self.y > G_GAMEHEIGHT then
         self.y = 0
     end
 end
