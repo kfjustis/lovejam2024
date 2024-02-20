@@ -1,11 +1,13 @@
 local game = {}
 
 local ControlBox = require("obj.interactable")
+local Enemy = require("obj.enemy")
 local Player = require("obj.player")
 local Spacescroller = require("obj.spacescroller")
 local Spaceship = require("obj.spaceship")
 
 local bg
+local enemy
 local player
 local ship
 local box_north
@@ -18,6 +20,7 @@ end
 function game:init()
     bg = Spacescroller()
     ship = Spaceship()
+    enemy = Enemy()
 
     -- Boxes.
     box_north = ControlBox(192, 36, 32, 32)
@@ -52,6 +55,7 @@ function game:update(dt)
     box_east:update(dt)
     box_west:update(dt)
     player:update(dt)
+    enemy:update(dt)
 end
 
 function game:draw()
@@ -70,6 +74,8 @@ function game:draw()
     box_north:draw()
     box_east:draw()
     box_west:draw()
+
+    enemy:draw()
 
     --Draw player.
     player:draw()
