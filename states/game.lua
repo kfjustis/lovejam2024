@@ -1,12 +1,13 @@
 local game = {}
 
+local ControlBox = require("obj.interactable")
+local Player = require("obj.player")
 local Spacescroller = require("obj.spacescroller")
 local Spaceship = require("obj.spaceship")
-local ControlBox = require("obj.interactable")
 
 local bg
+local player
 local ship
-local ball
 local box_north
 local box_east
 local box_west
@@ -26,15 +27,17 @@ function game:init()
     box_west = ControlBox(36, 96, 32, 32)
     box_west:setColor(1, 0.6, 0, 1)
 
-    -- Player analog.
-    ball = G_WORLD:newCollider("Rectangle", {100, 100, 10, 10})
-    ball:setFixedRotation(true)
-    ball:setLinearDamping(10)
-    -- ball solver test
-    function ball:postSolve(other)
-        print("solved")
-        if other == box_west.collider then
-            print("\tinteraaaaaaaaaaaaa")
+    -- Set up player.
+    player = Player(100, 100)
+
+    function player.collider:postSolve(other)
+        --print("solved")
+        if other == box_north.collider then
+            Signal.emit("player_hit_control_box", player, box_north)
+        elseif other == box_east.collider then
+            Signal.emit("player_hit_control_box", player, box_east)
+        elseif other == box_west.collider then
+            Signal.emit("player_hit_control_box", player, box_west)
         end
     end
 end
@@ -45,24 +48,10 @@ end
 
 function game:update(dt)
     bg:update(dt)
-
-    local speed = 200
-    if love.keyboard.isDown("up") then
-        ball:setLinearVelocity(0, -speed)
-    end
-    if love.keyboard.isDown("down") then
-        ball:setLinearVelocity(0, speed)
-    end
-    if love.keyboard.isDown("left") then
-        ball:setLinearVelocity(-speed, 0)
-    end
-    if love.keyboard.isDown("right") then
-        ball:setLinearVelocity(speed, 0)
-    end
-
-    --Round position to full pixel.
-    ball:setX(math.floor(ball:getX()+0.5))
-    ball:setY(math.floor(ball:getY()+0.5))
+    box_north:update(dt)
+    box_east:update(dt)
+    box_west:update(dt)
+    player:update(dt)
 end
 
 function game:draw()
@@ -73,6 +62,7 @@ function game:draw()
     Push:setBorderColor(0, 0, 0, 1)
     love.graphics.clear(0,0,0,1)
 
+    -- Draw background.
     bg:draw()
     ship:draw()
 
@@ -80,6 +70,9 @@ function game:draw()
     box_north:draw()
     box_east:draw()
     box_west:draw()
+
+    --Draw player.
+    player:draw()
 
     -- Draw debug colliders.
     G_WORLD:draw()

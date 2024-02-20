@@ -1,8 +1,10 @@
 -- Global requires.
+Baton = require("lib.baton")
+Bf = require("lib.breezefield")
 Gamestate = require("lib.gamestate")
 Object = require("lib.classic")
 Push = require("lib.push")
-Bf = require("lib.breezefield")
+Signal = require("lib.signal")
 
 -- Global settings.
 G_GAMEWIDTH, G_GAMEHEIGHT = 320, 240
