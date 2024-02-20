@@ -13,6 +13,7 @@ local ship
 local box_north
 local box_east
 local box_west
+local paused
 
 function game:draw()
 end
@@ -46,16 +47,23 @@ function game:init()
 end
 
 function game:enter()
+    paused = true
     print("INFO: Switched to scene: G_S_GAME.")
 end
 
 function game:update(dt)
-    bg:update(dt)
-    box_north:update(dt)
-    box_east:update(dt)
-    box_west:update(dt)
-    player:update(dt)
-    enemy:update(dt)
+    if paused == false then
+        bg:update(dt)
+        box_north:update(dt)
+        box_east:update(dt)
+        box_west:update(dt)
+        player:update(dt)
+        enemy:update(dt)
+    else
+        if love.keyboard.isDown("space") then
+            paused = false
+        end
+    end
 end
 
 function game:draw()
@@ -66,22 +74,27 @@ function game:draw()
     Push:setBorderColor(0, 0, 0, 1)
     love.graphics.clear(0,0,0,1)
 
-    -- Draw background.
-    bg:draw()
-    ship:draw()
+    if paused == false then
+        bg:draw()
+        ship:draw()
+        box_north:draw()
+        box_east:draw()
+        box_west:draw()
+        enemy:draw()
+        player:draw()
+        G_WORLD:draw()
+    else
+        love.graphics.setColor(1, 1, 1, 1)
 
-    -- Draw boxes.
-    box_north:draw()
-    box_east:draw()
-    box_west:draw()
-
-    enemy:draw()
-
-    --Draw player.
-    player:draw()
-
-    -- Draw debug colliders.
-    G_WORLD:draw()
+        local msg = "The goal is to survive."
+        msg = msg.."\n\nRecharge the generator interfaces while"
+        msg = msg.."\nfighting off the space horde."
+        msg = msg.."\n\n\n\n\nMove:..........................WASD or ARROWS"
+        msg = msg.."\nRecharge Generator:...Move into it + SPACE"
+        msg = msg.."\nShoot:.........................LEFT MOUSE"
+        msg = msg.."\n\nPress SPACE to  start."
+        love.graphics.print(msg, 25, 25)
+    end
 
 
     Push:finish()
