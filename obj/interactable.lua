@@ -77,8 +77,8 @@ function Interactable:drawHealthBar()
     love.graphics.setColor(1, 0, 0, 1)
     love.graphics.rectangle(
         "fill", self:getX(), self:getY() - 10, self.w, 5)
-    -- Green fg bar.
     love.graphics.pop()
+    -- Green fg bar.
     love.graphics.push()
     love.graphics.setColor(0, 1, 0, 1)
     love.graphics.rectangle(

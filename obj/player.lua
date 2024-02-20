@@ -21,7 +21,7 @@ function Player:new(x, y)
             down = {"key:down", "key:s"},
             left = {"key:left", "key:a"},
             right = {"key:right", "key:d"},
-            heal = {"key:lshift"}
+            heal = {"key:space"}
         },
         pairs = {
             move = {"left", "right", "up", "down"}
