@@ -1,4 +1,5 @@
 -- Global requires.
+Anim8 = require("lib.anim8")
 Baton = require("lib.baton")
 Bf = require("lib.breezefield")
 Gamestate = require("lib.gamestate")
