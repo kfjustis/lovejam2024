@@ -48,6 +48,12 @@ function Player:update(dt)
 end
 
 function Player:draw()
+    love.graphics.push()
+    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.circle("fill", self.collider:getX()+1, self.collider:getY()+1, 10)
+    love.graphics.setColor(0, 1, 0.4, 1)
+    love.graphics.circle("fill", self.collider:getX(), self.collider:getY(), 10)
+    love.graphics.pop()
 end
 
 Signal.register("player_hit_control_box", function(player_ref, box_ref)

@@ -23,6 +23,8 @@ function game:init()
     ship = Spaceship()
     enemy = Enemy()
 
+    self:spawnLevelBoundaries()
+
     -- Boxes.
     box_north = ControlBox(192, 36, 32, 32)
     box_north:setColor(0, 0.8, 1, 1)
@@ -35,7 +37,6 @@ function game:init()
     player = Player(100, 100)
 
     function player.collider:postSolve(other)
-        --print("solved")
         if other == box_north.collider then
             Signal.emit("player_hit_control_box", player, box_north)
         elseif other == box_east.collider then
@@ -47,7 +48,7 @@ function game:init()
 end
 
 function game:enter()
-    paused = true
+    paused = false
     print("INFO: Switched to scene: G_S_GAME.")
 end
 
@@ -80,9 +81,9 @@ function game:draw()
         box_north:draw()
         box_east:draw()
         box_west:draw()
-        enemy:draw()
         player:draw()
-        G_WORLD:draw()
+        enemy:draw()
+        --G_WORLD:draw()
     else
         love.graphics.setColor(1, 1, 1, 1)
 
@@ -98,6 +99,48 @@ function game:draw()
 
 
     Push:finish()
+end
+
+function game:spawnLevelBoundaries()
+    local barriers = {}
+
+    local tlBarrier = G_WORLD:newCollider(
+        "Polygon",
+        {0,0 , 82,35 , 33,94, 0,0}
+    )
+    local trBarrier = G_WORLD:newCollider(
+        "Polygon",
+        {G_GAMEWIDTH,0 , G_GAMEWIDTH-82,35,
+         G_GAMEWIDTH-33,94, G_GAMEWIDTH,0}
+    )
+    local topBarrier = G_WORLD:newCollider(
+        "Rectangle",
+        {160,24, 175, 24}
+    )
+    local leftBarrier = G_WORLD:newCollider(
+        "Rectangle",
+        {32, 192, 5, 130}
+    )
+    local rightBarrier = G_WORLD:newCollider(
+        "Rectangle",
+        {G_GAMEWIDTH-32, 170, 5, 150}
+    )
+    local botBarrier = G_WORLD:newCollider(
+        "Rectangle",
+        {G_GAMEWIDTH/2.0, G_GAMEHEIGHT+1, 260, 2}
+    )
+
+    table.insert(barriers, tlBarrier)
+    table.insert(barriers, trBarrier)
+    table.insert(barriers, topBarrier)
+    table.insert(barriers, leftBarrier)
+    table.insert(barriers, rightBarrier)
+    table.insert(barriers, botBarrier)
+
+    for i,v in ipairs(barriers) do
+        v:setType("static")
+        v:setFixedRotation(true)
+    end
 end
 
 return game
