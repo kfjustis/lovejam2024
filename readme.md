@@ -2,6 +2,8 @@
 Made for Love Jam 2024 with Love 11.5!
 
 # Libraries used
+* [anim8](https://github.com/kikito/anim8) (commit: [bd38def](https://github.com/kikito/anim8/commit/bd38defa844ab2dfa3bf416a10c45ce376ba4c50), License: MIT)
+
 * [Baton](https://github.com/tesselode/baton) (commit: [6723dd9](https://github.com/tesselode/baton/commit/6723dd9f99ce8a20e553a7b818a1ebcd32cacbaf), License: MIT)
 
 * [Beehive.lua](https://github.com/drhayes/beehive.lua) (commit: [0087715](https://github.com/drhayes/beehive.lua/commit/00877150688ce42fffbaeeb76d7a4cb87e88da60), License: MIT)
