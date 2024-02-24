@@ -3,8 +3,8 @@ local Selector = require("lib.beehive.selector")
 local Sequence = require("lib.beehive.sequence")
 
 function Enemy:new()
-    self.x = 10
-    self.y = 10
+    self.x = love.math.random(0, G_GAMEWIDTH)
+    self.y = love.math.random(0, G_GAMEHEIGHT)
     self.last_origin_x = self.x
     self.last_origin_y = self.y
     self.goal_x = G_GAMEWIDTH / 2
