@@ -68,9 +68,14 @@ function game:update(dt)
         box_north:update(dt)
         box_east:update(dt)
         box_west:update(dt)
+
+        player:setKnownEnemies(self.enemies)
         player:update(dt)
+
+        local enemyCount = 0
         for i,v in ipairs(self.enemies) do
             v:update(dt)
+            enemyCount = enemyCount + 1
         end
     else
         if love.keyboard.isDown("space") then
