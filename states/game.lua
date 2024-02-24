@@ -7,7 +7,6 @@ local Spacescroller = require("obj.spacescroller")
 local Spaceship = require("obj.spaceship")
 
 local bg
-local enemy
 local player
 local ship
 local box_north

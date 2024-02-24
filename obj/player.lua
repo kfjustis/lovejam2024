@@ -1,4 +1,5 @@
 local Player = Object:extend()
+local Bullet = require("obj.bullet")
 local input
 
 function Player:new(x, y)
@@ -21,7 +22,8 @@ function Player:new(x, y)
     --This allows the player to mash Heal() when next to a control box.
     self.collider:setSleepingAllowed(false)
 
-    -- Give player access to the enemies in the level.
+    -- Give player access to the enemies in the level and bullets.
+    self.bullets = {}
     self.knownEnemies = {}
 
     input = Baton.new {
@@ -66,6 +68,9 @@ function Player:update(dt)
 
     self:updateAttacks()
     self:updateBoxHealing()
+    for i,v in ipairs(self.bullets) do
+        v:update(dt)
+    end
 end
 
 function Player:draw()
@@ -75,8 +80,10 @@ function Player:draw()
 
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(self.sprite, self.collider:getX(), self.collider:getY(), self.rotation, 1, 1, self.ox, self.oy)
-    --love.graphics.setColor(0, 1, 0.4, 1)
-    --love.graphics.circle("fill", self.collider:getX(), self.collider:getY(), 10)
+
+    for i,v in ipairs(self.bullets) do
+        v:draw()
+    end
     love.graphics.pop()
 end
 
@@ -93,7 +100,8 @@ end)
 
 function Player:updateAttacks()
     if input:pressed("attack") then
-        table.remove(self.knownEnemies)
+        local bullet = Bullet(self.collider:getX(), self.collider:getY(), self.look_dir_x, self.look_dir_y)
+        table.insert(self.bullets, bullet)
     end
 end
 
