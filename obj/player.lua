@@ -8,7 +8,7 @@ function Player:new(x, y)
     self.ox = 10
     self.oy = 10
     self.look_dir_x = 0
-    self.look_dir_x = 0
+    self.look_dir_y = 0
     self.rotation = 0
     self.speed = 200
     self.holdingHeal = false
@@ -51,12 +51,12 @@ function Player:update(dt)
 
     -- Set sprite scale based on the vector.
     if x ~= self.look_dir_x then
-        self.look_dir_x = -x
+        self.look_dir_x = x
     end
     if y ~= self.look_dir_y then
         self.look_dir_y = y
     end
-    self.rotation = math.atan2(self.look_dir_x, self.look_dir_y)
+    self.rotation = math.atan2(-self.look_dir_x, self.look_dir_y)
 
     -- Apply the velocity based on the vector.
     local xSpeed = x * self.speed;
@@ -108,8 +108,11 @@ Signal.register("player_hit_control_box", function(player_ref, box_ref)
 end)
 
 function Player:updateAttacks()
-    if input:pressed("attack") then
-        local bullet = Bullet(self, Player, self.collider:getX(), self.collider:getY(), self.look_dir_x, self.look_dir_y)
+    if input:down("attack") then
+        local bullet =
+            Bullet(self, Player,
+                self.collider:getX(), self.collider:getY(),
+                -self.look_dir_x, self.look_dir_y)
         table.insert(self.bullets, bullet)
     end
 end
