@@ -6,7 +6,7 @@ function Bullet:new(owner, owner_type, spawn_x, spawn_y, look_x, look_y)
     self.y = spawn_y
     self.look_dir_x = look_x
     self.look_dir_y = look_y
-    self.speed = 400
+    self.speed = 800
     self.valid =  self.owner:is(owner_type)
 end
 
