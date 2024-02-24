@@ -66,10 +66,19 @@ function Player:update(dt)
     self.collider:setX(math.floor(self.collider:getX()+0.5))
     self.collider:setY(math.floor(self.collider:getY()+0.5))
 
-    self:updateAttacks()
+    -- Handle when player is healing a control box or attacking.
     self:updateBoxHealing()
+    self:updateAttacks()
+
+    -- Update bullets.
     for i,v in ipairs(self.bullets) do
         v:update(dt)
+        -- Cull to game region.
+        if v.x < 0 - 30 or v.x > G_GAMEWIDTH + 30 then
+            table.remove(self.bullets, i)
+        elseif v.y < 0 - 30 or v.y > G_GAMEHEIGHT + 30 then
+            table.remove(self.bullets, i)
+        end
     end
 end
 
@@ -100,7 +109,7 @@ end)
 
 function Player:updateAttacks()
     if input:pressed("attack") then
-        local bullet = Bullet(self.collider:getX(), self.collider:getY(), self.look_dir_x, self.look_dir_y)
+        local bullet = Bullet(self, Player, self.collider:getX(), self.collider:getY(), self.look_dir_x, self.look_dir_y)
         table.insert(self.bullets, bullet)
     end
 end
