@@ -1,9 +1,17 @@
 local Enemy = Object:extend()
 local Selector = require("lib.beehive.selector")
+local Sequence = require("lib.beehive.sequence")
 
 function Enemy:new()
-    self.x = 150
-    self.y = 150
+    self.x = 10
+    self.y = 10
+    self.last_origin_x = self.x
+    self.last_origin_y = self.y
+    self.goal_x = G_GAMEWIDTH / 2
+    self.goal_y = G_GAMEHEIGHT / 2
+    self.attached = false
+
+    self.speed = 2.5
     self.sprite = love.graphics.newImage("assets/enemy_magenta.png")
     self.grid = Anim8.newGrid(8, 8, self.sprite:getWidth(), self.sprite:getHeight())
     self.animation = Anim8.newAnimation(self.grid("1-2", 1), 0.1)
@@ -29,34 +37,79 @@ function Enemy:draw()
 end
 
 function Enemy:makeBrain()
-    -- Keeping waitRandom example for now.
-    --return (Selector{self:waitRandom(1, 3)})
-    return (Selector{self:rotateInPlace()})
+    return (Selector{
+        self:attachBoxOrMoveTask(),
+        self:randomUpdateGoalTask(),
+    })
+end
+
+function Enemy:randomUpdateGoalTask()
+    return Sequence({
+        self:waitRandomTask(0, 3),
+        self:updateGoalTask()
+    })
 end
 
 -- Wait a bit of time before succeeding.
-function Enemy:waitRandom(low, hi)
+function Enemy:waitRandomTask(low, hi)
     local elapsed = 0
     local span = love.math.random(low, hi)
-
     return function(entity, dt)
         elapsed = elapsed + dt
         if elapsed >= span then
             elapsed = 0
             span = love.math.random(low, hi)
-            print("waitRandom finished, span: "..span)
             return 'success'
         end
         return 'running'
     end
 end
 
---Rotate clockwise steadily.
-function Enemy:rotateInPlace()
-    local rotation = 0
-
+function Enemy:attachBoxOrMoveTask()
     return function(entity, dt)
-        rotation = rotation + dt * 4.0
+        if self:isAtGoal() == true or self.attached == true then
+            return 'failure'
+        end
+        local dx = (self.last_origin_x - self.goal_x) / self.speed * dt
+        local dy = (self.last_origin_y - self.goal_y) / self.speed * dt
+        self.x = self.x - dx
+        self.y = self.y - dy
+        return 'success'
+    end
+end
+
+function Enemy:updateGoalTask()
+    return function(entity, dt)
+        if self:updateGoal() == true then
+            return 'success'
+        end
+        return 'failure'
+    end
+end
+
+function Enemy:updateGoal()
+    if self:isAtGoal() == true then
+        self.last_origin_x = self.x
+        self.last_origin_y = self.y
+        self.goal_x = math.random(50, G_GAMEWIDTH - 50)
+        self.goal_y = math.random(25, G_GAMEHEIGHT - 25)
+        return true
+    end
+    return false
+end
+
+function Enemy:isAtGoal()
+    local remaining_x = math.abs(self.x - self.goal_x)
+    local remaining_y = math.abs(self.y - self.goal_y)
+    return (remaining_x < 1.0 and remaining_y < 1.0)
+end
+
+--Rotate clockwise steadily.
+function Enemy:rotateInPlaceTask()
+    local rotation = 0
+    local rot_speed = 4.0
+    return function(entity, dt)
+        rotation = rotation + dt * rot_speed
         if rotation > 6.28 then
             rotation = 0
         end
