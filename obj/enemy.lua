@@ -11,7 +11,7 @@ function Enemy:new()
     self.goal_y = G_GAMEHEIGHT / 2
     self.attached = false
 
-    self.speed = 2.5
+    self.speed = 1.5
     self.sprite = love.graphics.newImage("assets/enemy_magenta.png")
     self.grid = Anim8.newGrid(8, 8, self.sprite:getWidth(), self.sprite:getHeight())
     self.animation = Anim8.newAnimation(self.grid("1-2", 1), 0.1)
@@ -45,7 +45,7 @@ end
 
 function Enemy:randomUpdateGoalTask()
     return Sequence({
-        self:waitRandomTask(0, 3),
+        self:waitRandomTask(0, 1),
         self:updateGoalTask()
     })
 end
