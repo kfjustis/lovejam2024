@@ -74,6 +74,13 @@ function game:update(dt)
         local enemyCount = 0
         for i,v in ipairs(self.enemies) do
             v:update(dt)
+            -- Check for control box collision.
+            local hits = G_WORLD:queryRectangleArea(v.x - 8, v.y - 8, v.x + 8, v.y + 8)
+            for j,w in ipairs(hits) do
+                if w == box_north.collider or w == box_east.collider or w == box_west.collider then
+                    v:setAttached()
+                end
+            end
             enemyCount = enemyCount + 1
         end
     else
@@ -100,6 +107,21 @@ function game:draw()
         player:draw()
         for i,v in ipairs(self.enemies) do
             v:draw()
+
+            -- Draw enemy query bounds.
+            --[[
+            if v.attached == false then
+                love.graphics.push()
+                love.graphics.setColor(1, 0, 0, 1)
+                love.graphics.rectangle("line", v.x - 8, v.y - 8, 16, 16)
+                love.graphics.pop()
+            else
+                love.graphics.push()
+                love.graphics.setColor(0, 1, 0, 1)
+                love.graphics.rectangle("line", v.x - 8, v.y - 8, 16, 16)
+                love.graphics.pop()
+            end
+            ]]--
         end
         --G_WORLD:draw()
     else

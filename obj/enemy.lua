@@ -13,6 +13,7 @@ function Enemy:new()
 
     self.speed = 1.5
     self.sprite = love.graphics.newImage("assets/enemy_magenta.png")
+    self.sprite_attached = love.graphics.newImage("assets/enemy_red.png")
     self.grid = Anim8.newGrid(8, 8, self.sprite:getWidth(), self.sprite:getHeight())
     self.animation = Anim8.newAnimation(self.grid("1-2", 1), 0.1)
     self.brain = self:makeBrain()
@@ -102,6 +103,14 @@ function Enemy:isAtGoal()
     local remaining_x = math.abs(self.x - self.goal_x)
     local remaining_y = math.abs(self.y - self.goal_y)
     return (remaining_x < 1.0 and remaining_y < 1.0)
+end
+
+function Enemy:setAttached()
+    local rand = love.math.random(1, 300)
+    if rand == 1 then
+        self.attached = true
+        self.sprite = self.sprite_attached
+    end
 end
 
 --Rotate clockwise steadily.
