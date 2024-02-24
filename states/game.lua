@@ -21,9 +21,13 @@ end
 function game:init()
     bg = Spacescroller()
     ship = Spaceship()
-    enemy = Enemy()
 
     self:spawnLevelBoundaries()
+
+    -- Enemy data.
+    self.enemySpawnTime = 5;
+    self.enemySpawnTimer = self.enemySpawnTime;
+    self.enemies = {}
 
     -- Boxes.
     box_north = ControlBox(192, 36, 32, 32)
@@ -54,12 +58,20 @@ end
 
 function game:update(dt)
     if paused == false then
+        -- Update timers.
+        self.enemySpawnTimer = self.enemySpawnTimer - (2.0 * dt)
+        if self.enemySpawnTimer <= 0 then
+            self:spawnEnemy()
+            self.enemySpawnTimer = self.enemySpawnTime
+        end
         bg:update(dt)
         box_north:update(dt)
         box_east:update(dt)
         box_west:update(dt)
         player:update(dt)
-        enemy:update(dt)
+        for i,v in ipairs(self.enemies) do
+            v:update(dt)
+        end
     else
         if love.keyboard.isDown("space") then
             paused = false
@@ -82,7 +94,9 @@ function game:draw()
         box_east:draw()
         box_west:draw()
         player:draw()
-        enemy:draw()
+        for i,v in ipairs(self.enemies) do
+            v:draw()
+        end
         --G_WORLD:draw()
     else
         love.graphics.setColor(1, 1, 1, 1)
@@ -141,6 +155,11 @@ function game:spawnLevelBoundaries()
         v:setType("static")
         v:setFixedRotation(true)
     end
+end
+
+function game:spawnEnemy()
+    local enemy = Enemy()
+    table.insert(self.enemies, enemy)
 end
 
 return game
