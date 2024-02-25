@@ -18,6 +18,12 @@ G_S_WIN = require("states.win")
 G_S_LOSE = require("states.lose")
 
 function love.load()
+    -- Load the audio immediately. Set it to static so web doesn't have to
+    -- stream from disk constantly.
+    G_MUSIC = love.audio.newSource("assets/Attack_On_CyberCity.ogg", "static")
+    G_MUSIC:setLooping(true)
+    G_MUSIC:setVolume(0.25)
+
     -- Apply window and graphics settings first.
     love.graphics.setDefaultFilter("nearest", "nearest", 1)
     Push:setupScreen(G_GAMEWIDTH, G_GAMEHEIGHT, G_WINDOWWIDTH, G_WINDOWHEIGHT, {

@@ -13,6 +13,7 @@ function Player:new(x, y)
     self.speed = 200
     self.holdingHeal = false
     self.healBox = nil
+    self.canShoot = false
 
     self.sprite = love.graphics.newImage("assets/player.png")
     self.collider = G_WORLD:newCollider("Circle", {self.x, self.y, 10})
@@ -117,7 +118,7 @@ Signal.register("player_hit_control_box", function(player_ref, box_ref)
 end)
 
 function Player:updateAttacks()
-    if input:down("attack") then
+    if input:down("attack") and self.canShoot then
         local bullet =
             Bullet(self, Player,
                 self.collider:getX(), self.collider:getY(),
@@ -137,6 +138,22 @@ end
 
 function Player:setKnownEnemies(enemies)
     self.knownEnemies = enemies
+end
+
+function Player:setRotation(rot)
+    self.rotation = rot
+end
+
+function Player:clearPlayerTables()
+    for i,v in ipairs(self.bullets) do
+        v:hide()
+    end
+    self.knownEnemies = {}
+    self.bullets = {}
+end
+
+function Player:setCanShoot(setting)
+    self.canShoot = setting
 end
 
 return Player
