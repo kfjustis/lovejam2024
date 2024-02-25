@@ -90,6 +90,11 @@ function Interactable:getHpPercent()
     return self.health / 100
 end
 
+function Interactable:setHp(hp)
+    self.health = math.min(hp, 100)
+    self.health = math.max(self.health, 0)
+end
+
 function Interactable:heal()
     local maxHealth = 100
     local updateHealth = self.health + self.healRate

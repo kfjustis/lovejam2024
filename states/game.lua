@@ -14,9 +14,6 @@ local box_east
 local box_west
 local paused
 
-function game:draw()
-end
-
 function game:init()
     bg = Spacescroller()
     ship = Spaceship()
@@ -51,8 +48,28 @@ function game:init()
 end
 
 function game:enter()
-    paused = false
+    paused = true
     print("INFO: Switched to scene: G_S_GAME.")
+
+    -- Set control box starting hp values.
+    box_north:setHp(100)
+    box_east:setHp(100)
+    box_west:setHp(100)
+
+    -- Set the player position.
+    player:setPosition((G_GAMEWIDTH / 2), (G_GAMEHEIGHT / 2) - 5)
+end
+
+function game:leave()
+    -- Clean up the enemy spawn timer.
+    self.enemySpawnTimer = self.enemySpawnTime
+
+    -- Clean up enemies.
+    --for i,v in ipairs(self.enemies) do
+    --    table.remove(self.enemies, i)
+    --end
+    self.enemies = {}
+    collectgarbage()
 end
 
 function game:update(dt)
@@ -82,6 +99,10 @@ function game:update(dt)
                 end
             end
             enemyCount = enemyCount + 1
+        end
+
+        if love.keyboard.isDown("return") then
+            Gamestate.switch(G_S_LOSE)
         end
     else
         if love.keyboard.isDown("space") then
