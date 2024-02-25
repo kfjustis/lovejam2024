@@ -1,5 +1,7 @@
 local Interactable = Object:extend()
 
+local DEFAULT_DEPLETE_RATE = 0.1
+
 function Interactable:new(x, y, w, h)
     self.x = x
     self.y = y
@@ -21,7 +23,7 @@ function Interactable:new(x, y, w, h)
     self.health = 100
     self.healFactor = 2
     self.healRate = 1 * self.healFactor
-    self.depleteRate = 0.1
+    self.depleteRate = DEFAULT_DEPLETE_RATE
 end
 
 function Interactable:update(dt)
@@ -105,6 +107,15 @@ function Interactable:deplete()
     local minHealth = 0
     local updateHealth = self.health - self.depleteRate
     self.health = math.max(updateHealth, minHealth)
+end
+
+function Interactable:getDepleteRate()
+    return self.depleteRate
+end
+
+function Interactable:setEnemyPenalty(count)
+    local penaltyFactor = 0.02
+    self.depleteRate = DEFAULT_DEPLETE_RATE + (count * penaltyFactor)
 end
 
 return Interactable

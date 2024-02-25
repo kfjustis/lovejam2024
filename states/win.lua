@@ -1,31 +1,31 @@
-local lose = {}
+local win = {}
 
-function lose:init()
+function win:init()
 end
 
-function lose:enter()
-    print("INFO: Switched to scene: G_S_LOSE.")
+function win:enter()
+    print("INFO: Switched to scene: G_S_WIN.")
 end
 
-function lose:leave()
+function win:leave()
 end
 
-function lose:update(dt)
+function win:update(dt)
     if love.keyboard.isDown("backspace") then
         Gamestate.switch(G_S_GAME)
     end
 end
 
-function lose:draw()
+function win:draw()
     Push:start()
     Push:setBorderColor(0, 0, 0, 1)
     love.graphics.clear(0,0,0,1)
 
     love.graphics.setColor(1, 1, 1, 1)
 
-        local msg = "You lost.\n\nTry again? (Press BACKSPACE)"
+        local msg = "YOU WON!\n\n\n\n\n\nTry again? (Press BACKSPACE)"
         love.graphics.print(msg, 25, 25)
     Push:finish()
 end
 
-return lose
+return win

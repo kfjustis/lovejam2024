@@ -14,6 +14,7 @@ G_WINDOWWIDTH, G_WINDOWHEIGHT = 640, 480
 -- Global states.
 G_S_FOCUS = require("states.focus")
 G_S_GAME = require("states.game")
+G_S_WIN = require("states.win")
 G_S_LOSE = require("states.lose")
 
 function love.load()

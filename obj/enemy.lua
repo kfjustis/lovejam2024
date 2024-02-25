@@ -113,6 +113,10 @@ function Enemy:setAttached()
     end
 end
 
+function Enemy:isAttached()
+    return self.attached
+end
+
 --Rotate clockwise steadily.
 function Enemy:rotateInPlaceTask()
     local rotation = 0

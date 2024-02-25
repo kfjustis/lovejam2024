@@ -15,6 +15,7 @@ local box_west
 local paused
 
 local DEFAULT_SPAWN_TIME = 5
+local DEFAULT_WARP_TIME = 200
 
 function game:init()
     bg = Spacescroller()
@@ -26,6 +27,9 @@ function game:init()
     self.enemySpawnTime = 0.5;
     self.enemySpawnTimer = self.enemySpawnTime;
     self.enemies = {}
+
+    -- Warp data.
+    self.warpTimer = DEFAULT_WARP_TIME;
 
     -- Boxes.
     box_north = ControlBox(192, 36, 32, 32)
@@ -64,6 +68,7 @@ end
 
 function game:leave()
     -- Clean up the enemy spawn timer.
+    self.warpTimer = DEFAULT_WARP_TIME
     self.enemySpawnTimer = DEFAULT_SPAWN_TIME
 
     -- Clean up enemies.
@@ -76,12 +81,14 @@ end
 
 function game:update(dt)
     if paused == false then
-        -- Update timers.
-        self.enemySpawnTimer = self.enemySpawnTimer - (2.0 * dt)
-        if self.enemySpawnTimer <= 0 then
-            self:spawnEnemy()
-            self.enemySpawnTimer = self.enemySpawnTime
+        if self.warpTimer <= 0 then
+            Gamestate.switch(G_S_WIN)
+        elseif areBoxesDead() then
+            Gamestate.switch(G_S_LOSE)
         end
+
+        self:updateTimers(dt)
+
         bg:update(dt)
         box_north:update(dt)
         box_east:update(dt)
@@ -90,22 +97,7 @@ function game:update(dt)
         player:setKnownEnemies(self.enemies)
         player:update(dt)
 
-        local enemyCount = 0
-        for i,v in ipairs(self.enemies) do
-            v:update(dt)
-            -- Check for control box collision.
-            local hits = G_WORLD:queryRectangleArea(v.x - 8, v.y - 8, v.x + 8, v.y + 8)
-            for j,w in ipairs(hits) do
-                if w == box_north.collider or w == box_east.collider or w == box_west.collider then
-                    v:setAttached()
-                end
-            end
-            enemyCount = enemyCount + 1
-        end
-
-        if love.keyboard.isDown("return") then
-            Gamestate.switch(G_S_LOSE)
-        end
+        self:updateEnemyCollisions(dt)
     else
         if love.keyboard.isDown("space") then
             paused = false
@@ -128,24 +120,8 @@ function game:draw()
         box_east:draw()
         box_west:draw()
         player:draw()
-        for i,v in ipairs(self.enemies) do
-            v:draw()
-
-            -- Draw enemy query bounds.
-            --[[
-            if v.attached == false then
-                love.graphics.push()
-                love.graphics.setColor(1, 0, 0, 1)
-                love.graphics.rectangle("line", v.x - 8, v.y - 8, 16, 16)
-                love.graphics.pop()
-            else
-                love.graphics.push()
-                love.graphics.setColor(0, 1, 0, 1)
-                love.graphics.rectangle("line", v.x - 8, v.y - 8, 16, 16)
-                love.graphics.pop()
-            end
-            ]]--
-        end
+        self:drawEnemies()
+        self:drawWarpUi()
         --G_WORLD:draw()
     else
         love.graphics.setColor(1, 1, 1, 1)
@@ -153,9 +129,9 @@ function game:draw()
         local msg = "The goal is to survive."
         msg = msg.."\n\nRecharge the generator interfaces while"
         msg = msg.."\nfighting off the space horde."
-        msg = msg.."\n\n\n\n\nMove:..........................WASD or ARROWS"
-        msg = msg.."\nRecharge Generator:...Move into it + SPACE"
-        msg = msg.."\nShoot:.........................LEFT MOUSE"
+        msg = msg.."\n\n\n\n\nMove:...........................WASD"
+        msg = msg.."\nRecharge Generators:...Move into it + SPACE"
+        msg = msg.."\nShoot:..........................LEFT MOUSE"
         msg = msg.."\n\nPress SPACE to  start."
         love.graphics.print(msg, 25, 25)
     end
@@ -209,6 +185,117 @@ end
 function game:spawnEnemy()
     local enemy = Enemy()
     table.insert(self.enemies, enemy)
+end
+
+function game:updateEnemyCollisions(dt)
+    local northEnemies = {}
+    local northEnemiesCount = 0
+    local eastEnemies = {}
+    local eastEnemiesCount = 0
+    local westEnemies = {}
+    local westEnemiesCount = 0
+
+    for i,v in ipairs(self.enemies) do
+        -- Update the enemy.
+        v:update(dt)
+
+        -- Check for control box collision.
+        local hits = G_WORLD:queryRectangleArea(v.x - 8, v.y - 8, v.x + 8, v.y + 8)
+
+        -- Set attachment data.
+        for j,w in ipairs(hits) do
+            if w == box_north.collider then
+                v:setAttached()
+                if v:isAttached() then
+                    table.insert(northEnemies, w)
+                    northEnemiesCount = northEnemiesCount + 1
+                end
+            end
+            if w == box_east.collider then
+                v:setAttached()
+                if v:isAttached() then
+                    table.insert(eastEnemies, w)
+                    eastEnemiesCount = eastEnemiesCount + 1
+                end
+            end
+            if w == box_west.collider then
+                v:setAttached()
+                if v:isAttached() then
+                    table.insert(westEnemies, w)
+                    westEnemiesCount = westEnemiesCount + 1
+                end
+            end
+        end
+    end
+    box_north:setEnemyPenalty(northEnemiesCount)
+    box_east:setEnemyPenalty(eastEnemiesCount)
+    box_west:setEnemyPenalty(westEnemiesCount)
+end
+
+function game:updateTimers(dt)
+    self.warpTimer = self.warpTimer - (2.0 * dt)
+
+    self.enemySpawnTimer = self.enemySpawnTimer - (2.0 * dt)
+    if self.enemySpawnTimer <= 0 then
+        self:spawnEnemy()
+        self.enemySpawnTimer = self.enemySpawnTime
+    end
+end
+
+function game:drawEnemies()
+    for i,v in ipairs(self.enemies) do
+        v:draw()
+
+        -- Draw enemy query bounds.
+        --[[
+        if v.attached == false then
+            love.graphics.push()
+            love.graphics.setColor(1, 0, 0, 1)
+            love.graphics.rectangle("line", v.x - 8, v.y - 8, 16, 16)
+            love.graphics.pop()
+        else
+            love.graphics.push()
+            love.graphics.setColor(0, 1, 0, 1)
+            love.graphics.rectangle("line", v.x - 8, v.y - 8, 16, 16)
+            love.graphics.pop()
+        end
+        ]]--
+    end
+end
+
+function game:drawWarpUi()
+    local boxHeight = 30
+    local boxTl_x = 0
+    local boxTl_y = G_GAMEHEIGHT - boxHeight
+    local txtOffset_x = 6
+    local txtOffset_y = 8
+
+    love.graphics.push()
+    love.graphics.setColor(0, 0, 0, 0.5)
+    love.graphics.rectangle("fill", 0, boxTl_y, G_GAMEWIDTH, boxHeight)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.print("WARP CHG:", boxTl_x + txtOffset_x, boxTl_y + txtOffset_y)
+
+    -- Bar bg color.
+    local bar_o_x = txtOffset_x + 75
+    local bar_o_y = boxTl_y + txtOffset_y + 3
+    local barPercent = (DEFAULT_WARP_TIME - self.warpTimer) / DEFAULT_WARP_TIME
+
+    love.graphics.setColor(49.0/255.0, 92.0/255.0, 132.0/255.0, 1)
+    love.graphics.rectangle("fill", bar_o_x, bar_o_y, G_GAMEWIDTH - bar_o_x, 10)
+
+    love.graphics.setColor(81.0/255.0, 171.0/255.0, 255.0/255.0, 1)
+    love.graphics.rectangle("fill", bar_o_x, bar_o_y, (G_GAMEWIDTH - bar_o_x) * barPercent, 10)
+    love.graphics.pop()
+end
+
+function areBoxesDead()
+    if (box_north:getHpPercent() <= 0 and
+        box_east:getHpPercent() <= 0 and
+        box_west:getHpPercent() <= 0) then
+        return true
+    end
+    return false
 end
 
 return game
