@@ -1,6 +1,9 @@
 # Description
 Made for Love Jam 2024 with Love 11.5!
 
+# Song Credit
+* [Attack On CyberCity, by Slaleky](https://slaleky.itch.io/retro-and-electronic-music-pack)
+
 # Libraries used
 * [anim8](https://github.com/kikito/anim8) (commit: [bd38def](https://github.com/kikito/anim8/commit/bd38defa844ab2dfa3bf416a10c45ce376ba4c50), License: MIT)
 
