@@ -11,6 +11,9 @@ function Interactable:new(x, y, w, h)
     self.g = 1
     self.b = 1
     self.a = 1
+    self.sprite = love.graphics.newImage("assets/generator.png")
+    self.ox = 0
+    self.oy = 0
 
     -- Set up collider so it doesn't move or rotate.
     self.collider = G_WORLD:newCollider(
@@ -32,10 +35,8 @@ end
 
 function Interactable:draw()
     love.graphics.push()
-    love.graphics.setColor(
-        self.r, self.g, self.b, self.a)
-    love.graphics.rectangle(
-        "fill", self.x, self.y, self.w, self.h)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(self.sprite, self.x, self.y, 0, 1, 1, self.ox, self.oy)
     love.graphics.pop()
 
     self:drawHealthBar()
