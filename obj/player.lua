@@ -33,7 +33,7 @@ function Player:new(x, y)
             left = {"key:left", "key:a"},
             right = {"key:right", "key:d"},
             heal = {"key:space"},
-            attack = {"key:rshift"}
+            attack = {"key:rshift", "mouse:1"}
         },
         pairs = {
             move = {"left", "right", "up", "down"}
@@ -94,6 +94,11 @@ function Player:draw()
         v:draw()
     end
     love.graphics.pop()
+end
+
+function Player:setPosition(x, y)
+    self.collider:setX(x)
+    self.collider:setY(y)
 end
 
 Signal.register("player_hit_control_box", function(player_ref, box_ref)
