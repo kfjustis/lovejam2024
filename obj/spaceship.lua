@@ -12,7 +12,6 @@ end
 
 function Spaceship:draw()
     love.graphics.draw(self.sprite_bg, self.x, self.y)
-    love.graphics.draw(self.sprite_mat_controls, self.x, self.y)
 end
 
 return Spaceship
