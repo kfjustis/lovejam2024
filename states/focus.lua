@@ -19,9 +19,17 @@ function focus:draw()
 
     -- Black border bars and render region.
     Push:setBorderColor(0, 0, 0, 1)
-    love.graphics.clear(0,0,0,1)
+    love.graphics.clear(0, 0, 0, 1)
 
-    love.graphics.print("Click to Start", 10, 10)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.print("Click to Start", G_GAMEHEIGHT / 2, G_GAMEHEIGHT / 2 - 8)
+
+    -- Debug centering.
+    --[[
+    love.graphics.setColor(1, 0, 0, 1)
+    love.graphics.line(0, G_GAMEHEIGHT/2, G_GAMEWIDTH, G_GAMEHEIGHT/2)
+    love.graphics.line(G_GAMEWIDTH/2, 0, G_GAMEWIDTH/2, G_GAMEHEIGHT)
+    ]]--
 
     Push:finish()
 end

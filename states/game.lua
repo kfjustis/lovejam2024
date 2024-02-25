@@ -14,6 +14,8 @@ local box_east
 local box_west
 local paused
 
+local DEFAULT_SPAWN_TIME = 5
+
 function game:init()
     bg = Spacescroller()
     ship = Spaceship()
@@ -21,7 +23,7 @@ function game:init()
     self:spawnLevelBoundaries()
 
     -- Enemy data.
-    self.enemySpawnTime = 5;
+    self.enemySpawnTime = 0.5;
     self.enemySpawnTimer = self.enemySpawnTime;
     self.enemies = {}
 
@@ -62,7 +64,7 @@ end
 
 function game:leave()
     -- Clean up the enemy spawn timer.
-    self.enemySpawnTimer = self.enemySpawnTime
+    self.enemySpawnTimer = DEFAULT_SPAWN_TIME
 
     -- Clean up enemies.
     --for i,v in ipairs(self.enemies) do
