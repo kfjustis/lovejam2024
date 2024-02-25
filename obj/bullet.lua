@@ -50,4 +50,10 @@ function Bullet:draw()
     love.graphics.pop()
 end
 
+function Bullet:hide()
+    -- Send way off the screen to get culled.
+    self.x = -1000
+    self.y = -1000
+end
+
 return Bullet

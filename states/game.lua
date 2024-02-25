@@ -12,6 +12,7 @@ local ship
 local box_north
 local box_east
 local box_west
+
 local paused
 
 local DEFAULT_SPAWN_TIME = 5
@@ -64,18 +65,23 @@ function game:enter()
 
     -- Set the player position.
     player:setPosition((G_GAMEWIDTH / 2), (G_GAMEHEIGHT / 2) - 5)
+    player:setRotation(0)
 end
 
 function game:leave()
+    -- Stop new bullets.
+    player:setCanShoot(false)
+
+    -- Stop music.
+    G_MUSIC:stop()
+
     -- Clean up the enemy spawn timer.
     self.warpTimer = DEFAULT_WARP_TIME
     self.enemySpawnTimer = DEFAULT_SPAWN_TIME
 
     -- Clean up enemies.
-    --for i,v in ipairs(self.enemies) do
-    --    table.remove(self.enemies, i)
-    --end
     self.enemies = {}
+    player:clearPlayerTables()
     collectgarbage()
 end
 
@@ -101,6 +107,8 @@ function game:update(dt)
     else
         if love.keyboard.isDown("space") then
             paused = false
+            player:setCanShoot(true)
+            G_MUSIC:play()
         end
     end
 end
