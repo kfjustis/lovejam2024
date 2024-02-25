@@ -48,15 +48,18 @@ function Player:update(dt)
 
     -- Get player vector based on key presses.
     local x, y = input:get("move")
+    local moving = (x ~= 0 or y ~= 0)
 
-    -- Set sprite scale based on the vector.
-    if x ~= self.look_dir_x then
+    -- Set sprite scale based on the vector, but only while moving.
+    if moving and x ~= self.look_dir_x then
         self.look_dir_x = x
     end
-    if y ~= self.look_dir_y then
+    if moving and y ~= self.look_dir_y then
         self.look_dir_y = y
     end
-    self.rotation = math.atan2(-self.look_dir_x, self.look_dir_y)
+    if moving then
+        self.rotation = math.atan2(-self.look_dir_x, self.look_dir_y)
+    end
 
     -- Apply the velocity based on the vector.
     local xSpeed = x * self.speed;
@@ -88,7 +91,8 @@ function Player:draw()
     love.graphics.circle("fill", self.collider:getX()+1, self.collider:getY()+1, 10)
 
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(self.sprite, self.collider:getX(), self.collider:getY(), self.rotation, 1, 1, self.ox, self.oy)
+    love.graphics.draw(self.sprite, self.collider:getX(), self.collider:getY(),
+        self.rotation, 1, 1, self.ox, self.oy)
 
     for i,v in ipairs(self.bullets) do
         v:draw()
